@@ -23,7 +23,7 @@ const verJs = fs.readFileSync(path.join(root, 'js', 'version.js'), 'utf8');
 const verJson = JSON.parse(fs.readFileSync(path.join(root, 'version.json'), 'utf8'));
 const m = verJs.match(/APP_VERSION\s*=\s*'([^']+)'/);
 check('version.json matches js/version.js', m && m[1] === verJson.version, (m && m[1]) + ' vs ' + verJson.version);
-check('sw.js cache name matches version', fs.readFileSync(path.join(root, 'sw.js'), 'utf8').includes('docs-capsules-v' + verJson.version));
+check('sw.js cache name matches version', fs.readFileSync(path.join(root, 'sw.js'), 'utf8').includes('offdoc-v' + verJson.version));
 for (const f of ['index.html', 'js/app.js', 'css/style.css']) {
   const src = fs.readFileSync(path.join(root, f), 'utf8');
   check(f + ' has no CDN references', !/https?:\/\/(cdn|unpkg|cdnjs|fonts\.googleapis)/.test(src));
