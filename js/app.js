@@ -4,7 +4,7 @@ const I18N = {
   fa: {
     appName: 'OffDoc', tabCapsules: 'کپسول‌ها', tabReader: 'خواندن', tabSettings: 'تنظیمات',
     capsulesTitle: 'کپسول‌ها', capsulesSub: 'داکیومنت هر سایت را به‌صورت یک کپسول جدا دانلود کنید.',
-    loadTitle: 'بارگذاری کپسول', loadButton: 'انتخاب فایل کپسول', loadedCapsules: 'کپسول‌های بارگذاری‌شده', loadAnother: 'بارگذاری کپسول دیگر', dropHint: 'فایل .zip کپسول را اینجا رها کنید، یا انتخابش کنید.',
+    loadTitle: 'بارگذاری کپسول', loadButton: 'انتخاب فایل کپسول', loadedCapsules: 'کپسول‌های بارگذاری‌شده', loadAnother: 'بارگذاری کپسول دیگر', fontSize: 'اندازه فونت', fontSizeHint: 'اندازه‌ی متن مقاله‌ها', fontSmall: 'کوچک', fontMedium: 'متوسط', fontLarge: 'بزرگ', dropHint: 'فایل .zip کپسول را اینجا رها کنید، یا انتخابش کنید.',
     downloadNote: 'بعد از دانلود، به تب «خواندن» بروید و فایل کپسول را آنجا بارگذاری کنید تا خوانده شود. کپسول در مرورگر ذخیره نمی‌شود؛ هر بار که اپ را باز می‌کنید، دوباره فایل را انتخاب کنید.',
     files: 'فایل', version: 'نسخه', updated: 'به‌روز شده', size: 'حجم', download: 'دانلود',
     noCapsuleTitle: 'هنوز کپسولی بارگذاری نشده', noCapsuleSub: 'یک فایل کپسول (.zip) را بارگذاری کنید تا داکیومنتش را آفلاین بخوانید.',
@@ -28,7 +28,7 @@ const I18N = {
   en: {
     appName: 'OffDoc', tabCapsules: 'Capsules', tabReader: 'Reading', tabSettings: 'Settings',
     capsulesTitle: 'Capsules', capsulesSub: 'Download each site’s docs as a separate capsule.',
-    loadTitle: 'Load capsule', loadButton: 'Choose capsule file', loadedCapsules: 'Loaded capsules', loadAnother: 'Load another capsule', dropHint: 'Drop a capsule .zip file here, or choose it.',
+    loadTitle: 'Load capsule', loadButton: 'Choose capsule file', loadedCapsules: 'Loaded capsules', loadAnother: 'Load another capsule', fontSize: 'Font size', fontSizeHint: 'Article text size', fontSmall: 'Small', fontMedium: 'Medium', fontLarge: 'Large', dropHint: 'Drop a capsule .zip file here, or choose it.',
     downloadNote: 'After downloading, go to the Reading tab and load the capsule file there to read it. The capsule is not stored in the browser; choose the file again each time you open the app.',
     files: 'files', version: 'Version', updated: 'Updated', size: 'Size', download: 'Download',
     noCapsuleTitle: 'No capsule loaded yet', noCapsuleSub: 'Load a capsule (.zip) file to read its docs offline.',
@@ -56,9 +56,44 @@ const state = {
   lang: localStorage.getItem('dc-lang') || 'fa',
   theme: localStorage.getItem('dc-theme') || 'auto',
   tab: 'capsules', capsules: [], activeId: null,
+  fontSize: localStorage.getItem('dc-font-size') || 'medium',
   codeBlocks: {}
 };
 function t(k) { const v = (I18N[state.lang] && I18N[state.lang][k]) || I18N.en[k]; return v == null ? k : v; }
+function applyFontSize() {
+  document.documentElement.dataset.fontSize = state.fontSize;
+  $$('#fontSeg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.fontSize === state.fontSize)));
+}
+/* ---------- URL routing (hash) + back/forward ---------- */
+function routeHash() {
+  const cap = activeCapsule();
+  if (state.tab === 'reader' && cap) {
+    const e = tocEntries()[cap.current];
+    return '#/reader/' + encodeURIComponent(cap.manifest.id) + (e && e.path ? e.path : '');
+  }
+  return '#/' + state.tab;
+}
+function pushRoute() { const h = routeHash(); if (location.hash !== h) history.pushState(null, '', h); }
+function replaceRoute() { const h = routeHash(); if (location.hash !== h) history.replaceState(null, '', h); }
+function applyRoute() {
+  const hash = location.hash || '';
+  const m = hash.match(/^#\/reader\/([^/]+)(\/.*)?$/);
+  if (m) {
+    const cap = state.capsules.find((c) => c.manifest.id === decodeURIComponent(m[1]));
+    state.tab = 'reader';
+    if (cap) {
+      state.activeId = cap.id;
+      const entries = cap.manifest.toc;
+      const idx = m[2] ? entries.findIndex((e) => e.path === m[2]) : 0;
+      renderTabs(); renderCapsPanel(); renderToc(); openDoc(idx >= 0 ? idx : 0, false);
+    } else {
+      renderTabs(); renderReader();
+    }
+    return;
+  }
+  const tm = hash.match(/^#\/(capsules|settings|reader)$/);
+  switchTab(tm ? tm[1] : 'capsules', false);
+}
 function activeCapsule() { return state.capsules.find((c) => c.id === state.activeId) || null; }
 
 function applyTheme() {
@@ -84,11 +119,12 @@ function renderTabs() {
     `<button type="button" data-tab="${id}" aria-selected="${state.tab === id}"><span class="ic" aria-hidden="true">${ic}</span>${label}</button>`).join('');
   $$('[data-tab]').forEach((b) => b.addEventListener('click', () => switchTab(b.dataset.tab)));
 }
-function switchTab(tab) {
+function switchTab(tab, push) {
   if (state.tab === tab) { window.scrollTo({ top: 0, behavior: 'smooth' }); }
   state.tab = tab;
   $$('.view').forEach((v) => v.classList.toggle('active', v.id === 'view-' + tab));
   renderTabs();
+  if (push !== false) pushRoute();
   window.scrollTo({ top: 0 });
 }
 
@@ -167,7 +203,7 @@ function unloadCapsule(id) {
   if (state.activeId === target.id) state.activeId = state.capsules.length ? state.capsules[0].id : null;
   renderCapsPanel(); renderToc();
   const cap = activeCapsule();
-  if (cap) openDoc(cap.current); else renderReader();
+  if (cap) openDoc(cap.current); else { renderReader(); pushRoute(); }
 }
 /* ---------- loaded-capsules side panel ---------- */
 function renderCapsPanel() {
@@ -353,7 +389,7 @@ function highlightCode(code, language) {
   } catch (e) { /* fall through */ }
   return esc(code);
 }
-function openDoc(i) {
+function openDoc(i, push) {
   const cap = activeCapsule();
   const entries = tocEntries();
   if (!cap || !entries.length || i < 0 || i >= entries.length) return;
@@ -361,6 +397,7 @@ function openDoc(i) {
   const entry = entries[i];
   const md = cap.docs[entry.file] || '';
   $('#docTitle').textContent = entry.title;
+  document.title = entry.title + ' — OffDoc';
   $('#docMeta').textContent = cap.manifest.name + ' · ' + (entry.group || '') + ' · ' + (i + 1) + ' / ' + entries.length;
   $('#docBody').innerHTML = renderMarkdown(md, entry.file);
   $('#prevBtn').textContent = '‹ ' + t('prev') + (i > 0 ? ': ' + entries[i - 1].title : '');
@@ -368,6 +405,7 @@ function openDoc(i) {
   $('#prevBtn').disabled = i === 0;
   $('#nextBtn').disabled = i === entries.length - 1;
   renderReader(); renderToc();
+  if (push !== false) pushRoute();
   window.scrollTo({ top: 0 });
 }
 function renderReader() {
@@ -376,6 +414,7 @@ function renderReader() {
   $('#readerEmpty').hidden = has;
   $('#readerMain').hidden = !has;
   if (has) $('#sideVer').textContent = cap.manifest.name + ' ' + cap.manifest.version;
+  else document.title = 'OffDoc';
   renderCapsPanel();
 }
 
@@ -424,8 +463,11 @@ async function checkUpdate() {
 document.addEventListener('DOMContentLoaded', () => {
   applyTheme();
   applyLang();
+  applyFontSize();
   loadCatalog();
-  switchTab('capsules');
+  applyRoute();
+  if (!location.hash) replaceRoute();
+  window.addEventListener('popstate', applyRoute);
   renderReader();
 
   $$('#langSeg button').forEach((b) => b.addEventListener('click', () => {
@@ -433,6 +475,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }));
   $$('#themeSeg button').forEach((b) => b.addEventListener('click', () => {
     state.theme = b.dataset.theme; localStorage.setItem('dc-theme', state.theme); applyTheme(); applyLang();
+  }));
+  $$('#fontSeg button').forEach((b) => b.addEventListener('click', () => {
+    state.fontSize = b.dataset.fontSize; localStorage.setItem('dc-font-size', state.fontSize); applyFontSize();
   }));
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (state.theme === 'auto') applyTheme(); });
 
