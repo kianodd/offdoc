@@ -2,10 +2,10 @@
 'use strict';
 const I18N = {
   fa: {
-    appName: 'OffDoc', tabCapsules: 'کپسول‌ها', tabReader: 'خواننده', tabSettings: 'تنظیمات',
+    appName: 'OffDoc', tabCapsules: 'کپسول‌ها', tabReader: 'خواندن', tabSettings: 'تنظیمات',
     capsulesTitle: 'کپسول‌ها', capsulesSub: 'داکیومنت هر سایت را به‌صورت یک کپسول جدا دانلود کنید.',
     loadTitle: 'بارگذاری کپسول', loadButton: 'انتخاب فایل کپسول', dropHint: 'فایل .zip کپسول را اینجا رها کنید، یا انتخابش کنید.',
-    downloadNote: 'بعد از دانلود، به تب «خواننده» بروید و فایل کپسول را آنجا بارگذاری کنید تا خوانده شود. کپسول در مرورگر ذخیره نمی‌شود؛ هر بار که اپ را باز می‌کنید، دوباره فایل را انتخاب کنید.',
+    downloadNote: 'بعد از دانلود، به تب «خواندن» بروید و فایل کپسول را آنجا بارگذاری کنید تا خوانده شود. کپسول در مرورگر ذخیره نمی‌شود؛ هر بار که اپ را باز می‌کنید، دوباره فایل را انتخاب کنید.',
     files: 'فایل', version: 'نسخه', updated: 'به‌روز شده', size: 'حجم', download: 'دانلود',
     noCapsuleTitle: 'هنوز کپسولی بارگذاری نشده', noCapsuleSub: 'یک فایل کپسول (.zip) را بارگذاری کنید تا داکیومنتش را آفلاین بخوانید.',
     toc: 'فهرست', prev: 'قبلی', next: 'بعدی', copy: 'کپی', copied: 'کپی شد',
@@ -26,10 +26,10 @@ const I18N = {
     loadedCapsule: 'کپسول بارگذاری‌شده', source: 'منبع', openChapter: 'باز کردن فصل'
   },
   en: {
-    appName: 'OffDoc', tabCapsules: 'Capsules', tabReader: 'Reader', tabSettings: 'Settings',
+    appName: 'OffDoc', tabCapsules: 'Capsules', tabReader: 'Reading', tabSettings: 'Settings',
     capsulesTitle: 'Capsules', capsulesSub: 'Download each site’s docs as a separate capsule.',
     loadTitle: 'Load capsule', loadButton: 'Choose capsule file', dropHint: 'Drop a capsule .zip file here, or choose it.',
-    downloadNote: 'After downloading, go to the Reader tab and load the capsule file there to read it. The capsule is not stored in the browser; choose the file again each time you open the app.',
+    downloadNote: 'After downloading, go to the Reading tab and load the capsule file there to read it. The capsule is not stored in the browser; choose the file again each time you open the app.',
     files: 'files', version: 'Version', updated: 'Updated', size: 'Size', download: 'Download',
     noCapsuleTitle: 'No capsule loaded yet', noCapsuleSub: 'Load a capsule (.zip) file to read its docs offline.',
     toc: 'Contents', prev: 'Previous', next: 'Next', copy: 'Copy', copied: 'Copied',
@@ -162,8 +162,12 @@ function tocEntries() { return state.capsule ? state.capsule.manifest.toc : []; 
 function renderToc() {
   const entries = tocEntries();
   const side = $('#sideToc');
-  const sheet = $('#tocSheetBody');
-  if (!entries.length) { side.hidden = true; side.innerHTML = ''; sheet.innerHTML = ''; return; }
+  const list = $('#readerToc');
+  if (!entries.length) {
+    side.hidden = true; side.innerHTML = '';
+    if (list) list.innerHTML = '';
+    return;
+  }
   let html = '<h3>' + esc(state.capsule.manifest.name) + '</h3>';
   let group = null;
   entries.forEach((e, i) => {
@@ -171,10 +175,13 @@ function renderToc() {
     html += `<a href="#" data-doc="${i}" class="${i === state.current ? 'active' : ''}">${esc(e.title)}</a>`;
   });
   side.hidden = false; side.innerHTML = html;
-  sheet.innerHTML = html;
-  $$('[data-doc]', side.parentElement || document).forEach((a) => a.addEventListener('click', (ev) => {
-    ev.preventDefault(); openDoc(Number(a.dataset.doc)); closeSheets(); switchTab('reader');
-  }));
+  if (list) {
+    list.innerHTML = html;
+    const count = $('#tocCount');
+    if (count) count.textContent = entries.length + ' ' + t('chapters');
+    const active = list.querySelector('a.active');
+    if (active && typeof active.scrollIntoView === 'function') active.scrollIntoView({ block: 'nearest' });
+  }
 }
 
 /* ---------- markdown rendering ---------- */
@@ -331,19 +338,7 @@ function renderReader() {
   const has = !!state.capsule;
   $('#readerEmpty').hidden = has;
   $('#readerMain').hidden = !has;
-  $('#tocBtn').style.display = has ? '' : 'none';
   if (has) $('#sideVer').textContent = state.capsule.manifest.name + ' ' + state.capsule.manifest.version;
-}
-
-/* ---------- sheets ---------- */
-function openSheet(id) {
-  closeSheets();
-  $('#sheetBack').classList.add('open');
-  $(id).classList.add('open');
-}
-function closeSheets() {
-  $('#sheetBack').classList.remove('open');
-  $$('.sheet').forEach((s) => s.classList.remove('open'));
 }
 
 /* ---------- update check ---------- */
@@ -414,16 +409,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   $('#prevBtn').addEventListener('click', () => openDoc(state.current - 1));
   $('#nextBtn').addEventListener('click', () => openDoc(state.current + 1));
-  $('#tocBtn').addEventListener('click', () => openSheet('#tocSheet'));
-  $('#tocClose').addEventListener('click', closeSheets);
-  $('#sheetBack').addEventListener('click', closeSheets);
   $('#unloadBtn').addEventListener('click', () => { unloadCapsule(); switchTab('capsules'); });
   $('#checkUpdateBtn').addEventListener('click', checkUpdate);
 
   // Delegated clicks: TOC links, code copy, TS/JS toggle
   document.addEventListener('click', (e) => {
     const docLink = e.target.closest('[data-doc]');
-    if (docLink) { e.preventDefault(); openDoc(Number(docLink.dataset.doc)); closeSheets(); switchTab('reader'); return; }
+    if (docLink) { e.preventDefault(); openDoc(Number(docLink.dataset.doc)); switchTab('reader'); return; }
     const copyBtn = e.target.closest('[data-copy]');
     if (copyBtn) {
       const cb = state.codeBlocks[copyBtn.dataset.copy];
