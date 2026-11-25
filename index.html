@@ -37,8 +37,8 @@
       <p class="foot" data-i18n="downloadNote"></p>
     </section>
 
-    <!-- Reader tab -->
-    <section class="view" id="view-reader" aria-label="Reader">
+    <!-- Reading tab -->
+    <section class="view" id="view-reader" aria-label="Reading">
       <div id="readerEmpty" class="empty">
         <div class="sym" aria-hidden="true">▤</div>
         <h2 data-i18n="noCapsuleTitle"></h2>
@@ -52,7 +52,10 @@
       </div>
       <div id="readerMain" class="reader-wrap" hidden>
         <div class="page-head"><h1 id="docTitle"></h1><p id="docMeta"></p></div>
-        <button class="btn secondary block toc-toggle" id="tocBtn" type="button" data-i18n="toc"></button>
+        <div class="group toc-card">
+          <div class="toc-head"><b data-i18n="toc"></b><span id="tocCount"></span></div>
+          <div class="toc-list" id="readerToc"></div>
+        </div>
         <article class="doc" id="docBody" dir="ltr" lang="en"></article>
         <div class="pager">
           <button class="btn secondary" id="prevBtn" type="button"></button>
@@ -121,12 +124,6 @@
   <nav class="tabbar" id="tabbar" aria-label="Tabs"></nav>
 </div>
 
-<div class="sheet-back" id="sheetBack"></div>
-<div class="sheet" id="tocSheet" role="dialog" aria-label="Contents">
-  <div class="grab"></div>
-  <div class="sheet-bar"><h2 data-i18n="toc"></h2><button class="btn ghost" id="tocClose" type="button" data-i18n="close"></button></div>
-  <div id="tocSheetBody"></div>
-</div>
 <noscript><p style="padding:24px">OffDoc needs JavaScript.</p></noscript>
 </body>
 </html>
