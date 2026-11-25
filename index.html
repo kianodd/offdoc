@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#e0234e">
+<meta name="description" content="Docs Capsules — download documentation capsules, load them, read offline.">
+<title>Docs Capsules</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="js/vendor/highlight.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="js/vendor/highlight-dark.css" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/version.js"></script>
+<script src="js/vendor/jszip.min.js" defer></script>
+<script src="js/vendor/marked.min.js" defer></script>
+<script src="js/vendor/highlight.min.js" defer></script>
+<script src="js/app.js" defer></script>
+</head>
+<body>
+<div id="app">
+  <aside class="sidebar" aria-label="Sidebar">
+    <div class="brand"><img src="icons/icon-192.png" alt=""><div><b>Docs Capsules</b><span id="sideVer"></span></div></div>
+    <nav class="side-nav" id="sideNav" aria-label="Tabs"></nav>
+    <div class="side-toc" id="sideToc" hidden></div>
+  </aside>
+
+  <main id="main">
+    <div class="topbar">
+      <div class="brand-mini"><img src="icons/icon-192.png" alt=""><span>Docs Capsules</span></div>
+      <button class="lang-toggle" id="langToggle" type="button" aria-label="Language">EN</button>
+    </div>
+
+    <!-- Capsules tab -->
+    <section class="view" id="view-capsules" aria-label="Capsules">
+      <div class="page-head"><h1 data-i18n="capsulesTitle"></h1><p data-i18n="capsulesSub"></p></div>
+      <div class="dropzone" id="dropzone" tabindex="0">
+        <div class="sym" aria-hidden="true">▣</div>
+        <p data-i18n="dropHint"></p>
+        <button class="btn" id="pickBtn" type="button" data-i18n="loadButton"></button>
+        <input type="file" id="fileInput" accept=".zip,application/zip" hidden>
+      </div>
+      <div class="group" id="capsuleList" role="list"></div>
+      <p class="foot" data-i18n="downloadNote"></p>
+    </section>
+
+    <!-- Reader tab -->
+    <section class="view" id="view-reader" aria-label="Reader">
+      <div id="readerEmpty" class="empty">
+        <div class="sym" aria-hidden="true">▤</div>
+        <h2 data-i18n="noCapsuleTitle"></h2>
+        <p data-i18n="noCapsuleSub"></p>
+        <button class="btn" id="emptyLoadBtn" type="button" data-i18n="noCapsuleAction"></button>
+      </div>
+      <div id="readerMain" class="reader-wrap" hidden>
+        <div class="page-head"><h1 id="docTitle"></h1><p id="docMeta"></p></div>
+        <button class="btn secondary block toc-toggle" id="tocBtn" type="button" data-i18n="toc"></button>
+        <article class="doc" id="docBody" dir="ltr" lang="en"></article>
+        <div class="pager">
+          <button class="btn secondary" id="prevBtn" type="button"></button>
+          <button class="btn secondary" id="nextBtn" type="button"></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings tab -->
+    <section class="view" id="view-settings" aria-label="Settings">
+      <div class="page-head"><h1 data-i18n="settingsTitle"></h1></div>
+
+      <div class="group">
+        <div class="row"><div class="lead" aria-hidden="true">◐</div>
+          <div class="texts"><b data-i18n="language"></b><span data-i18n="languageHint"></span></div>
+          <div class="seg" id="langSeg" role="group" aria-label="Language">
+            <button type="button" data-lang="fa">فارسی</button>
+            <button type="button" data-lang="en">English</button>
+          </div>
+        </div>
+        <div class="row"><div class="lead" aria-hidden="true">◑</div>
+          <div class="texts"><b data-i18n="appearance"></b><span data-i18n="appearanceHint"></span></div>
+          <div class="seg" id="themeSeg" role="group" aria-label="Appearance">
+            <button type="button" data-theme="auto" data-i18n="auto"></button>
+            <button type="button" data-theme="light" data-i18n="light"></button>
+            <button type="button" data-theme="dark" data-i18n="dark"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="row"><div class="lead" aria-hidden="true">↻</div>
+          <div class="texts"><b data-i18n="updateTitle"></b><span id="updateStatus"></span></div>
+          <button class="btn secondary" id="checkUpdateBtn" type="button" data-i18n="updateCheck"></button>
+        </div>
+      </div>
+      <p class="foot" id="lastChecked"></p>
+
+      <div class="group">
+        <div class="row"><div class="lead" aria-hidden="true">ⓘ</div>
+          <div class="texts"><b data-i18n="aboutTitle"></b><span data-i18n="aboutText"></span></div>
+        </div>
+        <div class="row"><div class="lead" aria-hidden="true">✈</div>
+          <div class="texts"><b data-i18n="offlineTitle"></b><span data-i18n="offlineNote"></span></div>
+        </div>
+        <div class="row"><div class="lead" aria-hidden="true">◌</div>
+          <div class="texts"><b data-i18n="noCacheTitle"></b><span data-i18n="noCacheNote"></span></div>
+        </div>
+        <div class="row"><div class="lead" aria-hidden="true">©</div>
+          <div class="texts"><b data-i18n="attributionTitle"></b><span data-i18n="attribution"></span></div>
+        </div>
+      </div>
+
+      <div class="group">
+        <button class="row danger" id="unloadBtn" type="button">
+          <div class="lead" aria-hidden="true">✕</div>
+          <div class="texts"><b data-i18n="unloadCapsule"></b><span data-i18n="unloadHint"></span></div>
+        </button>
+      </div>
+      <p class="foot" id="verFoot"></p>
+    </section>
+  </main>
+</div>
+
+<div class="tabdock">
+  <nav class="tabbar" id="tabbar" aria-label="Tabs"></nav>
+  <button class="search-fab" id="searchFab" type="button" aria-label="Search" disabled>⌕</button>
+</div>
+
+<div class="sheet-back" id="sheetBack"></div>
+<div class="sheet" id="searchSheet" role="dialog" aria-label="Search">
+  <div class="grab"></div>
+  <div class="sheet-bar"><h2 data-i18n="search"></h2><button class="btn ghost" id="sheetClose" type="button" data-i18n="close"></button></div>
+  <input type="search" id="searchInput" data-i18n-ph="searchPlaceholder" autocomplete="off">
+  <div id="searchResults"></div>
+  <p class="small" data-i18n="searchHint"></p>
+</div>
+<div class="sheet" id="tocSheet" role="dialog" aria-label="Contents">
+  <div class="grab"></div>
+  <div class="sheet-bar"><h2 data-i18n="toc"></h2><button class="btn ghost" id="tocClose" type="button" data-i18n="close"></button></div>
+  <div id="tocSheetBody"></div>
+</div>
+<noscript><p style="padding:24px">Docs Capsules needs JavaScript.</p></noscript>
+</body>
+</html>
