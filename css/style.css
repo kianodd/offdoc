@@ -1,6 +1,11 @@
 /* OffDoc — Apple iOS 26 style, vanilla CSS. Glass only on the functional layer. */
 @font-face{font-family:'Vazirmatn';src:url('../fonts/Vazirmatn-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
 @font-face{font-family:'Vazirmatn';src:url('../fonts/Vazirmatn-Bold.woff2') format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:'Manrope';src:url('../fonts/Manrope.woff2') format('woff2');font-weight:200 800;font-display:swap}
+@font-face{font-family:'Inconsolata';src:url('../fonts/Inconsolata.woff2') format('woff2');font-weight:200 900;font-display:swap}
+html[data-font-size="small"]{--doc-font-size:15px}
+html[data-font-size="medium"]{--doc-font-size:17px}
+html[data-font-size="large"]{--doc-font-size:20px}
 :root{
   --tint:#007aff; --nest:#e0234e; --red:#ff3b30;
   --radius:16px; --tab-h:56px;
@@ -26,11 +31,10 @@ html[data-theme="dark"]{
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
-  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Vazirmatn',system-ui,'Segoe UI',sans-serif;
+  font-family:'Manrope','Vazirmatn',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;
   background:var(--bg-group); color:var(--label); font-size:17px; line-height:1.55;
   min-height:100dvh;
 }
-[dir="rtl"] body{font-family:'Vazirmatn',-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 a{color:var(--tint);text-decoration:none}
 h1{font-size:34px;line-height:1.2;margin:0}
@@ -119,17 +123,17 @@ main{flex:1;min-width:0;padding:20px 16px 140px;max-width:100%}
 
 /* ---------- reader ---------- */
 .reader-wrap{max-width:672px;margin:0 auto}
-.doc{background:var(--bg);border-radius:var(--radius);padding:20px 20px 28px}
+.doc{background:var(--bg);border-radius:var(--radius);padding:20px 20px 28px;font-family:'Manrope','Vazirmatn',sans-serif;font-size:var(--doc-font-size,17px)}
 .doc:dir(ltr){text-align:left}
 .doc h1,.doc h2,.doc h3,.doc h4{line-height:1.3;margin:24px 0 10px;scroll-margin-top:20px}
-.doc h1{font-size:28px}.doc h2{font-size:24px}.doc h3{font-size:20px}
+.doc h1{font-size:1.65em}.doc h2{font-size:1.41em}.doc h3{font-size:1.18em}
 .doc table{border-collapse:collapse;width:100%;margin:12px 0;display:block;overflow-x:auto}
-.doc th,.doc td{border:1px solid var(--sep);padding:8px 10px;text-align:start;font-size:15px}
+.doc th,.doc td{border:1px solid var(--sep);padding:8px 10px;text-align:start;font-size:.88em}
 .doc th{background:var(--card2)}
 .doc img{max-width:100%;height:auto;border-radius:12px}
-.doc code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.86em;background:var(--code-bg);padding:2px 5px;border-radius:6px;direction:ltr;unicode-bidi:isolate}
+.doc code{font-family:'Inconsolata',ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.86em;background:var(--code-bg);padding:2px 5px;border-radius:6px;direction:ltr;unicode-bidi:isolate}
 .doc pre{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;padding:0;margin:14px 0;overflow-x:auto;overflow-y:hidden;white-space:pre}
-.doc pre code{background:transparent;padding:14px;display:block;font-size:14px;line-height:1.5;white-space:pre;overflow:visible}
+.doc pre code{background:transparent;padding:14px;display:block;font-size:.82em;line-height:1.5;white-space:pre;overflow:visible}
 .codebox{margin:14px 0}
 .codebox .code-head{display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--code-border);border-bottom:0;border-radius:12px 12px 0 0;padding:8px 12px;min-height:44px}
 .codebox .code-head .fname{flex:1;font-size:13px;color:var(--label2);direction:ltr;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -140,7 +144,7 @@ main{flex:1;min-width:0;padding:20px 16px 140px;max-width:100%}
 .callout.info{background:var(--info-bg);color:var(--info-fg)}
 .callout.warn{background:var(--warn-bg);color:var(--warn-fg)}
 .callout b{display:block;margin-bottom:2px}
-.filetree{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;padding:14px 16px;font-family:ui-monospace,Menlo,monospace;font-size:14px;direction:ltr;text-align:left;white-space:pre-wrap}
+.filetree{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;padding:14px 16px;font-family:'Inconsolata',ui-monospace,Menlo,monospace;font-size:14px;direction:ltr;text-align:left;white-space:pre-wrap}
 .pager{display:flex;gap:12px;margin:20px 0}
 .pager .btn{flex:1}
 .empty{max-width:420px;margin:64px auto;text-align:center;padding:0 16px}
