@@ -13,6 +13,7 @@ compressed file per site, loaded in the browser and read offline.
   cached by the browser — load the file again each session.
 - **Bilingual UI** (Persian / English). Doc text itself stays English, LTR.
 - **Tabs:** Capsules is download-only; Reader is read-only (load the capsule file there).
+- **Multi-capsule:** load several capsules at once; switch between them from the toggleable side panel in the Reader tab (each can be unloaded separately).
 - **Settings:** language, appearance (Auto / Light / Dark), and app update
   check (current version, check now, apply update & reload).
 - **Code blocks** render fully syntax-highlighted, never truncated, with a
