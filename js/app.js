@@ -4,7 +4,7 @@ const I18N = {
   fa: {
     appName: 'OffDoc', tabCapsules: 'کپسول‌ها', tabReader: 'خواندن', tabSettings: 'تنظیمات',
     capsulesTitle: 'کپسول‌ها', capsulesSub: 'داکیومنت هر سایت را به‌صورت یک کپسول جدا دانلود کنید.',
-    loadTitle: 'بارگذاری کپسول', loadButton: 'انتخاب فایل کپسول', dropHint: 'فایل .zip کپسول را اینجا رها کنید، یا انتخابش کنید.',
+    loadTitle: 'بارگذاری کپسول', loadButton: 'انتخاب فایل کپسول', loadedCapsules: 'کپسول‌های بارگذاری‌شده', loadAnother: 'بارگذاری کپسول دیگر', dropHint: 'فایل .zip کپسول را اینجا رها کنید، یا انتخابش کنید.',
     downloadNote: 'بعد از دانلود، به تب «خواندن» بروید و فایل کپسول را آنجا بارگذاری کنید تا خوانده شود. کپسول در مرورگر ذخیره نمی‌شود؛ هر بار که اپ را باز می‌کنید، دوباره فایل را انتخاب کنید.',
     files: 'فایل', version: 'نسخه', updated: 'به‌روز شده', size: 'حجم', download: 'دانلود',
     noCapsuleTitle: 'هنوز کپسولی بارگذاری نشده', noCapsuleSub: 'یک فایل کپسول (.zip) را بارگذاری کنید تا داکیومنتش را آفلاین بخوانید.',
@@ -28,7 +28,7 @@ const I18N = {
   en: {
     appName: 'OffDoc', tabCapsules: 'Capsules', tabReader: 'Reading', tabSettings: 'Settings',
     capsulesTitle: 'Capsules', capsulesSub: 'Download each site’s docs as a separate capsule.',
-    loadTitle: 'Load capsule', loadButton: 'Choose capsule file', dropHint: 'Drop a capsule .zip file here, or choose it.',
+    loadTitle: 'Load capsule', loadButton: 'Choose capsule file', loadedCapsules: 'Loaded capsules', loadAnother: 'Load another capsule', dropHint: 'Drop a capsule .zip file here, or choose it.',
     downloadNote: 'After downloading, go to the Reading tab and load the capsule file there to read it. The capsule is not stored in the browser; choose the file again each time you open the app.',
     files: 'files', version: 'Version', updated: 'Updated', size: 'Size', download: 'Download',
     noCapsuleTitle: 'No capsule loaded yet', noCapsuleSub: 'Load a capsule (.zip) file to read its docs offline.',
@@ -55,10 +55,11 @@ const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
 const state = {
   lang: localStorage.getItem('dc-lang') || 'fa',
   theme: localStorage.getItem('dc-theme') || 'auto',
-  tab: 'capsules', capsule: null, current: 0,
+  tab: 'capsules', capsules: [], activeId: null,
   codeBlocks: {}
 };
 function t(k) { const v = (I18N[state.lang] && I18N[state.lang][k]) || I18N.en[k]; return v == null ? k : v; }
+function activeCapsule() { return state.capsules.find((c) => c.id === state.activeId) || null; }
 
 function applyTheme() {
   const want = state.theme === 'auto'
@@ -73,7 +74,7 @@ function applyLang() {
   $$('[data-i18n-ph]').forEach((el) => { el.placeholder = t(el.dataset.i18nPh); });
   $$('#langSeg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === state.lang)));
   $$('#themeSeg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.theme === state.theme)));
-  renderTabs(); renderCapsuleList(); renderReader(); updateVersionUI();
+  renderTabs(); renderCapsuleList(); renderReader(); renderToc(); updateVersionUI();
 }
 function renderTabs() {
   const tabs = [['capsules', '▣', t('tabCapsules')], ['reader', '▤', t('tabReader')], ['settings', '⚙', t('tabSettings')]];
@@ -140,9 +141,14 @@ async function loadCapsuleFile(file) {
         blobs[name] = URL.createObjectURL(blob);
       }
     }
-    state.capsule = { manifest, docs, blobs, name: file.name };
-    state.current = 0;
-    renderToc(); openDoc(0); switchTab('reader');
+    const id = (manifest.id || manifest.name) + '@' + (manifest.version || '');
+    const prev = state.capsules.find((c) => c.id === id);
+    if (prev) Object.values(prev.blobs).forEach((u) => URL.revokeObjectURL(u));
+    const cap = { id, manifest, docs, blobs, fileName: file.name, current: 0 };
+    if (prev) state.capsules[state.capsules.indexOf(prev)] = cap;
+    else state.capsules.push(cap);
+    state.activeId = id;
+    renderCapsPanel(); renderToc(); openDoc(0); closeCapsPanel(); switchTab('reader');
     dz.querySelector('p').textContent = t('dropHint');
   } catch (e) {
     dz.querySelector('p').textContent = t('dropHint');
@@ -153,12 +159,40 @@ function showLoadError() {
   const body = $('#docBody');
   alert(t('loadError') + ' — ' + t('loadErrorText'));
 }
-function unloadCapsule() {
-  if (state.capsule) Object.values(state.capsule.blobs).forEach((u) => URL.revokeObjectURL(u));
-  state.capsule = null; state.current = 0;
-  renderToc(); renderReader();
+function unloadCapsule(id) {
+  const target = id ? state.capsules.find((c) => c.id === id) : activeCapsule();
+  if (!target) return;
+  Object.values(target.blobs).forEach((u) => URL.revokeObjectURL(u));
+  state.capsules = state.capsules.filter((c) => c !== target);
+  if (state.activeId === target.id) state.activeId = state.capsules.length ? state.capsules[0].id : null;
+  renderCapsPanel(); renderToc();
+  const cap = activeCapsule();
+  if (cap) openDoc(cap.current); else renderReader();
 }
-function tocEntries() { return state.capsule ? state.capsule.manifest.toc : []; }
+/* ---------- loaded-capsules side panel ---------- */
+function renderCapsPanel() {
+  const list = $('#capsPanelList');
+  const count = $('#capsCount');
+  if (count) count.textContent = state.capsules.length ? '· ' + state.capsules.length : '';
+  if (!list) return;
+  if (!state.capsules.length) {
+    list.innerHTML = '<p class="small">' + esc(t('noCapsuleTitle')) + '</p>';
+    return;
+  }
+  list.innerHTML = state.capsules.map((c) => `
+    <div class="cap-row ${c.id === state.activeId ? 'active' : ''}" role="listitem">
+      <button type="button" class="cap-pick" data-capsule="${esc(c.id)}">
+        <b>${esc(c.manifest.name)}</b><span>${esc(c.manifest.version || '')} · ${c.manifest.toc.length} ${esc(t('chapters'))}</span>
+      </button>
+      <button type="button" class="mini" data-unload-capsule="${esc(c.id)}" aria-label="${esc(t('unloadCapsule'))}">✕</button>
+    </div>`).join('');
+}
+function openCapsPanel() { $('#capsBack').classList.add('open'); $('#capsPanel').classList.add('open'); }
+function closeCapsPanel() { $('#capsBack').classList.remove('open'); $('#capsPanel').classList.remove('open'); }
+function toggleCapsPanel() {
+  if ($('#capsPanel').classList.contains('open')) closeCapsPanel(); else { renderCapsPanel(); openCapsPanel(); }
+}
+function tocEntries() { const cap = activeCapsule(); return cap ? cap.manifest.toc : []; }
 function renderToc() {
   const entries = tocEntries();
   const side = $('#sideToc');
@@ -168,11 +202,11 @@ function renderToc() {
     if (list) list.innerHTML = '';
     return;
   }
-  let html = '<h3>' + esc(state.capsule.manifest.name) + '</h3>';
+  let html = '<h3>' + esc(activeCapsule().manifest.name) + '</h3>';
   let group = null;
   entries.forEach((e, i) => {
     if (e.group !== group) { group = e.group; if (group) html += '<div class="toc-group">' + esc(group) + '</div>'; }
-    html += `<a href="#" data-doc="${i}" class="${i === state.current ? 'active' : ''}">${esc(e.title)}</a>`;
+    html += `<a href="#" data-doc="${i}" class="${i === activeCapsule().current ? 'active' : ''}">${esc(e.title)}</a>`;
   });
   side.hidden = false; side.innerHTML = html;
   if (list) {
@@ -261,7 +295,8 @@ function renderMarkdown(md, docFile) {
   return host.innerHTML;
 }
 function resolveAsset(src, docFile) {
-  if (!state.capsule || !src || src.startsWith('data:') || /^https?:\/\//i.test(src)) return null;
+  const cap = activeCapsule();
+  if (!cap || !src || src.startsWith('data:') || /^https?:\/\//i.test(src)) return null;
   let key = null;
   if (src.startsWith('/assets/')) key = 'assets/' + src.slice(8);
   else if (src.startsWith('assets/')) key = src;
@@ -272,13 +307,13 @@ function resolveAsset(src, docFile) {
     parts.split('/').forEach((p) => { if (p === '..') norm.pop(); else if (p !== '.') norm.push(p); });
     key = norm.join('/');
   }
-  if (state.capsule.blobs[key]) return state.capsule.blobs[key];
+  if (cap.blobs[key]) return cap.blobs[key];
   // assets may live under docs/ prefix in some capsules
   const alt = key.startsWith('assets/') ? key : 'assets/' + key.split('/').pop();
-  return state.capsule.blobs[alt] || null;
+  return cap.blobs[alt] || null;
 }
 function matchTocLink(href) {
-  if (!state.capsule) return null;
+  if (!activeCapsule()) return null;
   let path = href.replace(/^https?:\/\/docs\.nestjs\.com/i, '').replace(/^https?:\/\/[^/]+/i, '');
   path = path.split('#')[0].split('?')[0].replace(/\/$/, '') || '/';
   const entries = tocEntries();
@@ -319,13 +354,14 @@ function highlightCode(code, language) {
   return esc(code);
 }
 function openDoc(i) {
+  const cap = activeCapsule();
   const entries = tocEntries();
-  if (!entries.length || i < 0 || i >= entries.length) return;
-  state.current = i;
+  if (!cap || !entries.length || i < 0 || i >= entries.length) return;
+  cap.current = i;
   const entry = entries[i];
-  const md = state.capsule.docs[entry.file] || '';
+  const md = cap.docs[entry.file] || '';
   $('#docTitle').textContent = entry.title;
-  $('#docMeta').textContent = state.capsule.manifest.name + ' · ' + (entry.group || '') + ' · ' + (i + 1) + ' / ' + entries.length;
+  $('#docMeta').textContent = cap.manifest.name + ' · ' + (entry.group || '') + ' · ' + (i + 1) + ' / ' + entries.length;
   $('#docBody').innerHTML = renderMarkdown(md, entry.file);
   $('#prevBtn').textContent = '‹ ' + t('prev') + (i > 0 ? ': ' + entries[i - 1].title : '');
   $('#nextBtn').textContent = t('next') + (i < entries.length - 1 ? ': ' + entries[i + 1].title : '') + ' ›';
@@ -335,10 +371,12 @@ function openDoc(i) {
   window.scrollTo({ top: 0 });
 }
 function renderReader() {
-  const has = !!state.capsule;
+  const cap = activeCapsule();
+  const has = !!cap;
   $('#readerEmpty').hidden = has;
   $('#readerMain').hidden = !has;
-  if (has) $('#sideVer').textContent = state.capsule.manifest.name + ' ' + state.capsule.manifest.version;
+  if (has) $('#sideVer').textContent = cap.manifest.name + ' ' + cap.manifest.version;
+  renderCapsPanel();
 }
 
 /* ---------- update check ---------- */
@@ -407,13 +445,28 @@ document.addEventListener('DOMContentLoaded', () => {
   dz.addEventListener('drop', (e) => { const f = e.dataTransfer.files[0]; if (f) loadCapsuleFile(f); });
   dz.addEventListener('keydown', (e) => { if (e.key === 'Enter') fileInput.click(); });
 
-  $('#prevBtn').addEventListener('click', () => openDoc(state.current - 1));
-  $('#nextBtn').addEventListener('click', () => openDoc(state.current + 1));
+  $('#prevBtn').addEventListener('click', () => { const c = activeCapsule(); if (c) openDoc(c.current - 1); });
+  $('#nextBtn').addEventListener('click', () => { const c = activeCapsule(); if (c) openDoc(c.current + 1); });
+  $('#capsBtn').addEventListener('click', toggleCapsPanel);
+  $('#capsClose').addEventListener('click', closeCapsPanel);
+  $('#capsBack').addEventListener('click', closeCapsPanel);
+  $('#capsAddBtn').addEventListener('click', () => { closeCapsPanel(); fileInput.click(); });
   $('#unloadBtn').addEventListener('click', () => { unloadCapsule(); switchTab('capsules'); });
   $('#checkUpdateBtn').addEventListener('click', checkUpdate);
 
   // Delegated clicks: TOC links, code copy, TS/JS toggle
   document.addEventListener('click', (e) => {
+    const unloadCap = e.target.closest('[data-unload-capsule]');
+    if (unloadCap) { unloadCapsule(unloadCap.dataset.unloadCapsule); return; }
+    const capPick = e.target.closest('[data-capsule]');
+    if (capPick) {
+      state.activeId = capPick.dataset.capsule;
+      renderCapsPanel(); renderToc();
+      const cap = activeCapsule();
+      if (cap) openDoc(cap.current);
+      closeCapsPanel();
+      return;
+    }
     const docLink = e.target.closest('[data-doc]');
     if (docLink) { e.preventDefault(); openDoc(Number(docLink.dataset.doc)); switchTab('reader'); return; }
     const copyBtn = e.target.closest('[data-copy]');
