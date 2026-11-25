@@ -1,8 +1,8 @@
-/* Docs Capsules — vanilla JS. Capsule content is session-only, in-memory. */
+/* OffDoc — vanilla JS. Capsule content is session-only, in-memory. */
 'use strict';
 const I18N = {
   fa: {
-    appName: 'Docs Capsules', tabCapsules: 'کپسول‌ها', tabReader: 'خواننده', tabSettings: 'تنظیمات',
+    appName: 'OffDoc', tabCapsules: 'کپسول‌ها', tabReader: 'خواننده', tabSettings: 'تنظیمات',
     search: 'جستجو', searchPlaceholder: 'در این کپسول جستجو کنید…', searchHint: 'جستجو فقط داخل کپسولی که بارگذاری کرده‌اید انجام می‌شود.',
     capsulesTitle: 'کپسول‌ها', capsulesSub: 'داکیومنت هر سایت را به‌صورت یک کپسول جدا دانلود کنید، بعد فایلش را اینجا بارگذاری کنید و آفلاین بخوانید.',
     loadTitle: 'بارگذاری کپسول', loadButton: 'انتخاب فایل کپسول', dropHint: 'فایل .zip کپسول را اینجا رها کنید، یا انتخابش کنید.',
@@ -27,7 +27,7 @@ const I18N = {
     loadedCapsule: 'کپسول بارگذاری‌شده', source: 'منبع', openChapter: 'باز کردن فصل'
   },
   en: {
-    appName: 'Docs Capsules', tabCapsules: 'Capsules', tabReader: 'Reader', tabSettings: 'Settings',
+    appName: 'OffDoc', tabCapsules: 'Capsules', tabReader: 'Reader', tabSettings: 'Settings',
     search: 'Search', searchPlaceholder: 'Search inside this capsule…', searchHint: 'Search runs only inside the capsule you loaded.',
     capsulesTitle: 'Capsules', capsulesSub: 'Download each site’s docs as a separate capsule, then load its file here and read offline.',
     loadTitle: 'Load capsule', loadButton: 'Choose capsule file', dropHint: 'Drop a capsule .zip file here, or choose it.',
@@ -73,7 +73,6 @@ function applyLang() {
   document.documentElement.dir = state.lang === 'fa' ? 'rtl' : 'ltr';
   $$('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
   $$('[data-i18n-ph]').forEach((el) => { el.placeholder = t(el.dataset.i18nPh); });
-  $('#langToggle').textContent = state.lang === 'fa' ? 'EN' : 'فارسی';
   $$('#langSeg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === state.lang)));
   $$('#themeSeg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.theme === state.theme)));
   renderTabs(); renderCapsuleList(); renderReader(); updateVersionUI();
@@ -375,7 +374,7 @@ function closeSheets() {
 /* ---------- update check ---------- */
 function updateVersionUI() {
   const v = (typeof APP_VERSION !== 'undefined') ? APP_VERSION : '1.0.0';
-  $('#verFoot').textContent = 'Docs Capsules ' + v;
+  $('#verFoot').textContent = 'OffDoc ' + v;
   $('#sideVer').textContent = $('#sideVer').textContent || ('v' + v);
   const last = localStorage.getItem('dc-last-checked');
   $('#lastChecked').textContent = t('lastChecked') + ': ' + (last ? new Date(Number(last)).toLocaleString(state.lang === 'fa' ? 'fa-IR' : 'en') : t('never'));
@@ -421,11 +420,6 @@ document.addEventListener('DOMContentLoaded', () => {
   switchTab('capsules');
   renderReader();
 
-  $('#langToggle').addEventListener('click', () => {
-    state.lang = state.lang === 'fa' ? 'en' : 'fa';
-    localStorage.setItem('dc-lang', state.lang);
-    applyLang();
-  });
   $$('#langSeg button').forEach((b) => b.addEventListener('click', () => {
     state.lang = b.dataset.lang; localStorage.setItem('dc-lang', state.lang); applyLang();
   }));
