@@ -1,4 +1,4 @@
-/* Docs Capsules — Apple iOS 26 style, vanilla CSS. Glass only on the functional layer. */
+/* OffDoc — Apple iOS 26 style, vanilla CSS. Glass only on the functional layer. */
 @font-face{font-family:'Vazirmatn';src:url('../fonts/Vazirmatn-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
 @font-face{font-family:'Vazirmatn';src:url('../fonts/Vazirmatn-Bold.woff2') format('woff2');font-weight:700;font-display:swap}
 :root{
@@ -69,7 +69,6 @@ main{flex:1;min-width:0;padding:20px 16px 140px;max-width:100%}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:672px;margin:0 auto 16px}
 .topbar .brand-mini{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px}
 .topbar .brand-mini img{width:32px;height:32px;border-radius:9px}
-.lang-toggle{min-width:44px;min-height:44px;padding:8px 14px;border-radius:22px;background:var(--card);border:1px solid var(--sep);font-weight:600;font-size:15px}
 
 /* ---------- inset grouped lists ---------- */
 .group{max-width:672px;margin:0 auto 20px;background:var(--card);border-radius:var(--radius);overflow:hidden}
