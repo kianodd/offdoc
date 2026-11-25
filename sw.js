@@ -1,5 +1,5 @@
-/* Docs Capsules service worker — build: 1.0.0 */
-const CACHE = 'docs-capsules-v1.0.0';
+/* OffDoc service worker — build: 1.0.1 */
+const CACHE = 'offdoc-v1.0.1';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './version.json',
   './css/style.css', './js/app.js', './js/version.js',
