@@ -3,13 +3,12 @@
 const I18N = {
   fa: {
     appName: 'OffDoc', tabCapsules: 'کپسول‌ها', tabReader: 'خواننده', tabSettings: 'تنظیمات',
-    search: 'جستجو', searchPlaceholder: 'در این کپسول جستجو کنید…', searchHint: 'جستجو فقط داخل کپسولی که بارگذاری کرده‌اید انجام می‌شود.',
-    capsulesTitle: 'کپسول‌ها', capsulesSub: 'داکیومنت هر سایت را به‌صورت یک کپسول جدا دانلود کنید، بعد فایلش را اینجا بارگذاری کنید و آفلاین بخوانید.',
+    capsulesTitle: 'کپسول‌ها', capsulesSub: 'داکیومنت هر سایت را به‌صورت یک کپسول جدا دانلود کنید.',
     loadTitle: 'بارگذاری کپسول', loadButton: 'انتخاب فایل کپسول', dropHint: 'فایل .zip کپسول را اینجا رها کنید، یا انتخابش کنید.',
-    downloadNote: 'بعد از دانلود، فایل کپسول را از همین بخش بارگذاری کنید تا خوانده شود. کپسول در مرورگر ذخیره نمی‌شود؛ هر بار که اپ را باز می‌کنید، دوباره فایل را انتخاب کنید.',
+    downloadNote: 'بعد از دانلود، به تب «خواننده» بروید و فایل کپسول را آنجا بارگذاری کنید تا خوانده شود. کپسول در مرورگر ذخیره نمی‌شود؛ هر بار که اپ را باز می‌کنید، دوباره فایل را انتخاب کنید.',
     files: 'فایل', version: 'نسخه', updated: 'به‌روز شده', size: 'حجم', download: 'دانلود',
     noCapsuleTitle: 'هنوز کپسولی بارگذاری نشده', noCapsuleSub: 'یک فایل کپسول (.zip) را بارگذاری کنید تا داکیومنتش را آفلاین بخوانید.',
-    noCapsuleAction: 'بارگذاری کپسول', toc: 'فهرست', prev: 'قبلی', next: 'بعدی', copy: 'کپی', copied: 'کپی شد',
+    toc: 'فهرست', prev: 'قبلی', next: 'بعدی', copy: 'کپی', copied: 'کپی شد',
     hint: 'راهنمایی', warning: 'هشدار', settingsTitle: 'تنظیمات',
     language: 'زبان', languageHint: 'زبان رابط کاربری؛ متن داکیومنت همیشه انگلیسی و چپ‌چین است.',
     appearance: 'ظاهر', appearanceHint: 'پیش‌فرض خودکار است و از سیستم پیروی می‌کند.',
@@ -23,18 +22,17 @@ const I18N = {
     attributionTitle: 'منبع', attribution: 'داکیومنت NestJS با لایسنس MIT از nestjs/docs.nestjs.com است.',
     sessionTitle: 'جلسه', unloadCapsule: 'خارج کردن کپسول', unloadHint: 'کپسول فعلی را از حافظه خارج می‌کند.',
     loading: 'در حال بارگذاری کپسول…', loadError: 'فایل کپسول خوانده نشد', loadErrorText: 'مطمئن شوید فایل .zip یک کپسول معتبر است و دوباره تلاش کنید.',
-    searchNoResults: 'نتیجه‌ای پیدا نشد.', results: 'نتیجه', close: 'بستن', chapters: 'فصل',
+    close: 'بستن', chapters: 'فصل',
     loadedCapsule: 'کپسول بارگذاری‌شده', source: 'منبع', openChapter: 'باز کردن فصل'
   },
   en: {
     appName: 'OffDoc', tabCapsules: 'Capsules', tabReader: 'Reader', tabSettings: 'Settings',
-    search: 'Search', searchPlaceholder: 'Search inside this capsule…', searchHint: 'Search runs only inside the capsule you loaded.',
-    capsulesTitle: 'Capsules', capsulesSub: 'Download each site’s docs as a separate capsule, then load its file here and read offline.',
+    capsulesTitle: 'Capsules', capsulesSub: 'Download each site’s docs as a separate capsule.',
     loadTitle: 'Load capsule', loadButton: 'Choose capsule file', dropHint: 'Drop a capsule .zip file here, or choose it.',
-    downloadNote: 'After downloading, load the capsule file from this section to read it. The capsule is not stored in the browser; choose the file again each time you open the app.',
+    downloadNote: 'After downloading, go to the Reader tab and load the capsule file there to read it. The capsule is not stored in the browser; choose the file again each time you open the app.',
     files: 'files', version: 'Version', updated: 'Updated', size: 'Size', download: 'Download',
     noCapsuleTitle: 'No capsule loaded yet', noCapsuleSub: 'Load a capsule (.zip) file to read its docs offline.',
-    noCapsuleAction: 'Load capsule', toc: 'Contents', prev: 'Previous', next: 'Next', copy: 'Copy', copied: 'Copied',
+    toc: 'Contents', prev: 'Previous', next: 'Next', copy: 'Copy', copied: 'Copied',
     hint: 'Hint', warning: 'Warning', settingsTitle: 'Settings',
     language: 'Language', languageHint: 'Interface language; doc text is always English, left-to-right.',
     appearance: 'Appearance', appearanceHint: 'Auto follows the system by default.',
@@ -48,7 +46,7 @@ const I18N = {
     attributionTitle: 'Source', attribution: 'NestJS docs are MIT-licensed, from nestjs/docs.nestjs.com.',
     sessionTitle: 'Session', unloadCapsule: 'Unload capsule', unloadHint: 'Removes the current capsule from memory.',
     loading: 'Loading capsule…', loadError: 'Could not read the capsule file', loadErrorText: 'Make sure the .zip file is a valid capsule and try again.',
-    searchNoResults: 'No results found.', results: 'results', close: 'Close', chapters: 'chapters',
+    close: 'Close', chapters: 'chapters',
     loadedCapsule: 'Loaded capsule', source: 'Source', openChapter: 'Open chapter'
   }
 };
@@ -58,7 +56,7 @@ const state = {
   lang: localStorage.getItem('dc-lang') || 'fa',
   theme: localStorage.getItem('dc-theme') || 'auto',
   tab: 'capsules', capsule: null, current: 0,
-  codeBlocks: {}, searchIndex: null
+  codeBlocks: {}
 };
 function t(k) { const v = (I18N[state.lang] && I18N[state.lang][k]) || I18N.en[k]; return v == null ? k : v; }
 
@@ -143,7 +141,7 @@ async function loadCapsuleFile(file) {
       }
     }
     state.capsule = { manifest, docs, blobs, name: file.name };
-    state.current = 0; state.searchIndex = null;
+    state.current = 0;
     renderToc(); openDoc(0); switchTab('reader');
     dz.querySelector('p').textContent = t('dropHint');
   } catch (e) {
@@ -157,7 +155,7 @@ function showLoadError() {
 }
 function unloadCapsule() {
   if (state.capsule) Object.values(state.capsule.blobs).forEach((u) => URL.revokeObjectURL(u));
-  state.capsule = null; state.current = 0; state.searchIndex = null;
+  state.capsule = null; state.current = 0;
   renderToc(); renderReader();
 }
 function tocEntries() { return state.capsule ? state.capsule.manifest.toc : []; }
@@ -333,31 +331,8 @@ function renderReader() {
   const has = !!state.capsule;
   $('#readerEmpty').hidden = has;
   $('#readerMain').hidden = !has;
-  $('#searchFab').disabled = !has;
   $('#tocBtn').style.display = has ? '' : 'none';
   if (has) $('#sideVer').textContent = state.capsule.manifest.name + ' ' + state.capsule.manifest.version;
-}
-
-/* ---------- in-capsule search ---------- */
-function buildSearchIndex() {
-  if (state.searchIndex) return state.searchIndex;
-  state.searchIndex = tocEntries().map((e, i) => ({
-    i, title: e.title, text: (state.capsule.docs[e.file] || '').toLowerCase()
-  }));
-  return state.searchIndex;
-}
-function runSearch(q) {
-  const box = $('#searchResults');
-  q = (q || '').trim().toLowerCase();
-  if (!q || !state.capsule) { box.innerHTML = ''; return; }
-  const hits = buildSearchIndex().filter((e) =>
-    e.title.toLowerCase().includes(q) || e.text.includes(q)).slice(0, 20);
-  if (!hits.length) { box.innerHTML = `<p class="small">${t('searchNoResults')}</p>`; return; }
-  box.innerHTML = hits.map((h) => {
-    const pos = h.text.indexOf(q);
-    const snip = pos >= 0 ? h.text.slice(Math.max(0, pos - 60), pos + 90).replace(/\s+/g, ' ') : '';
-    return `<button type="button" class="result" data-doc="${h.i}"><b>${esc(h.title)}</b><span>${esc(snip)}</span></button>`;
-  }).join('') + `<p class="small">${hits.length} ${t('results')}</p>`;
 }
 
 /* ---------- sheets ---------- */
@@ -430,7 +405,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const fileInput = $('#fileInput');
   $('#pickBtn').addEventListener('click', () => fileInput.click());
-  $('#emptyLoadBtn').addEventListener('click', () => { switchTab('capsules'); fileInput.click(); });
   fileInput.addEventListener('change', () => { if (fileInput.files[0]) loadCapsuleFile(fileInput.files[0]); fileInput.value = ''; });
   const dz = $('#dropzone');
   ['dragover', 'dragenter'].forEach((ev) => dz.addEventListener(ev, (e) => { e.preventDefault(); dz.classList.add('over'); }));
@@ -443,9 +417,6 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#tocBtn').addEventListener('click', () => openSheet('#tocSheet'));
   $('#tocClose').addEventListener('click', closeSheets);
   $('#sheetBack').addEventListener('click', closeSheets);
-  $('#searchFab').addEventListener('click', () => { openSheet('#searchSheet'); setTimeout(() => $('#searchInput').focus(), 50); });
-  $('#sheetClose').addEventListener('click', closeSheets);
-  $('#searchInput').addEventListener('input', (e) => runSearch(e.target.value));
   $('#unloadBtn').addEventListener('click', () => { unloadCapsule(); switchTab('capsules'); });
   $('#checkUpdateBtn').addEventListener('click', checkUpdate);
 
