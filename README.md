@@ -14,6 +14,8 @@ compressed file per site, loaded in the browser and read offline.
 - **Bilingual UI** (Persian / English). Doc text itself stays English, LTR.
 - **Tabs:** Capsules is download-only; Reader is read-only (load the capsule file there).
 - **Multi-capsule:** load several capsules at once; switch between them from the toggleable side panel in the Reader tab (each can be unloaded separately).
+- **Routing:** hash URLs (`#/reader/<capsule-id><doc-path>`, `#/capsules`, `#/settings`) — every navigation pushes a history entry, so the browser Back button returns to the previous page. Deep links to a doc work only while its capsule is loaded (capsules are session-only by design).
+- **Reading:** font size Small/Medium/Large in Settings (article text only, saved). Persian font Vazirmatn, English text Manrope (the NestJS docs site font), code Inconsolata (also the NestJS docs code font) — all self-hosted woff2, no CDN.
 - **Settings:** language, appearance (Auto / Light / Dark), and app update
   check (current version, check now, apply update & reload).
 - **Code blocks** render fully syntax-highlighted, never truncated, with a
