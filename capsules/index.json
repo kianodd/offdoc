@@ -1,0 +1,15 @@
+{
+  "capsules": [
+    {
+      "id": "nestjs-docs",
+      "name": "NestJS Documentation",
+      "nameFa": "داکیومنت NestJS",
+      "version": "1.0.0",
+      "file": "nestjs-docs-v1.zip",
+      "bytes": 8722656,
+      "files": 233,
+      "updated": "2026-11-25",
+      "source": "https://github.com/nestjs/docs.nestjs.com"
+    }
+  ]
+}
