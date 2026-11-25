@@ -1,4 +1,4 @@
-# Docs Capsules
+# OffDoc
 
 Generic offline PWA for reading documentation as separate **capsules** — one
 compressed file per site, loaded in the browser and read offline.
