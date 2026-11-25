@@ -66,6 +66,10 @@ p{margin:0 0 12px}
 .side-toc a.active{background:var(--card2);font-weight:600}
 .toc-card{margin-bottom:20px}
 .reader-tools{display:flex;margin-bottom:12px}
+/* File picker: rendered but invisible. A `hidden`/display:none input is
+   the prime suspect for the picker not opening on Chrome Android when it
+   is triggered programmatically, so it stays in layout at 1px + opacity 0. */
+.file-picker{position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none}
 .badge{color:var(--label2);font-size:13px}
 .caps-back{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:60;display:none}
 .caps-back.open{display:block}
