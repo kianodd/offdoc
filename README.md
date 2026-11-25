@@ -12,6 +12,7 @@ compressed file per site, loaded in the browser and read offline.
 - **Session-only.** A loaded capsule is kept only in memory and is **not**
   cached by the browser — load the file again each session.
 - **Bilingual UI** (Persian / English). Doc text itself stays English, LTR.
+- **Tabs:** Capsules is download-only; Reader is read-only (load the capsule file there).
 - **Settings:** language, appearance (Auto / Light / Dark), and app update
   check (current version, check now, apply update & reload).
 - **Code blocks** render fully syntax-highlighted, never truncated, with a
@@ -39,4 +40,4 @@ MIT license, and a `manifest.json` whose TOC follows the official
 
 `push.py` uploads every file serially via the GitHub Contents API with a
 per-file SHA check, then enables GitHub Pages. Live site:
-https://kianodd.github.io/docs-capsules/
+https://kianodd.github.io/offdoc/
