@@ -1,0 +1,32 @@
+{
+  "mdCount": 187,
+  "imageCount": 46,
+  "zipBytes": 8722656,
+  "zipFile": "nestjs-docs-v1.zip",
+  "sourceCommit": "8decee4911aacaabfbd7d8c67a48af350c560501",
+  "updated": "2026-11-25",
+  "tocEntries": 188,
+  "unmappedNav": [],
+  "appendixFiles": [
+    "enterprise.md",
+    "faq/versions.md",
+    "graphql/guards-interceptors.md",
+    "migrating/aspnet-core.md",
+    "migrating/spring-boot.md",
+    "tutorials/ai-chat-backend.md",
+    "tutorials/background-jobs.md",
+    "tutorials/booking-system.md",
+    "tutorials/ecommerce-backend.md",
+    "tutorials/file-uploads.md",
+    "tutorials/google-login.md",
+    "tutorials/microservices-rabbitmq.md",
+    "tutorials/mongodb-crud-api.md",
+    "tutorials/multi-tenant-saas.md",
+    "tutorials/overview.md",
+    "tutorials/payments-webhooks.md",
+    "tutorials/project-management-api.md",
+    "tutorials/realtime-chat.md",
+    "tutorials/rest-api-jwt-authentication.md"
+  ],
+  "missingAssets": []
+}
