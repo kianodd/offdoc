@@ -1,5 +1,5 @@
-/* OffDoc service worker — build: 1.0.1 */
-const CACHE = 'offdoc-v1.0.1';
+/* OffDoc service worker — build: 1.0.2 */
+const CACHE = 'offdoc-v1.0.2';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './version.json',
   './css/style.css', './js/app.js', './js/version.js',
