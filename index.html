@@ -33,12 +33,6 @@
     <!-- Capsules tab -->
     <section class="view" id="view-capsules" aria-label="Capsules">
       <div class="page-head"><h1 data-i18n="capsulesTitle"></h1><p data-i18n="capsulesSub"></p></div>
-      <div class="dropzone" id="dropzone" tabindex="0">
-        <div class="sym" aria-hidden="true">▣</div>
-        <p data-i18n="dropHint"></p>
-        <button class="btn" id="pickBtn" type="button" data-i18n="loadButton"></button>
-        <input type="file" id="fileInput" accept=".zip,application/zip" hidden>
-      </div>
       <div class="group" id="capsuleList" role="list"></div>
       <p class="foot" data-i18n="downloadNote"></p>
     </section>
@@ -49,7 +43,12 @@
         <div class="sym" aria-hidden="true">▤</div>
         <h2 data-i18n="noCapsuleTitle"></h2>
         <p data-i18n="noCapsuleSub"></p>
-        <button class="btn" id="emptyLoadBtn" type="button" data-i18n="noCapsuleAction"></button>
+      <div class="dropzone" id="dropzone" tabindex="0">
+        <div class="sym" aria-hidden="true">▣</div>
+        <p data-i18n="dropHint"></p>
+        <button class="btn" id="pickBtn" type="button" data-i18n="loadButton"></button>
+        <input type="file" id="fileInput" accept=".zip,application/zip" hidden>
+      </div>
       </div>
       <div id="readerMain" class="reader-wrap" hidden>
         <div class="page-head"><h1 id="docTitle"></h1><p id="docMeta"></p></div>
@@ -120,17 +119,9 @@
 
 <div class="tabdock">
   <nav class="tabbar" id="tabbar" aria-label="Tabs"></nav>
-  <button class="search-fab" id="searchFab" type="button" aria-label="Search" disabled>⌕</button>
 </div>
 
 <div class="sheet-back" id="sheetBack"></div>
-<div class="sheet" id="searchSheet" role="dialog" aria-label="Search">
-  <div class="grab"></div>
-  <div class="sheet-bar"><h2 data-i18n="search"></h2><button class="btn ghost" id="sheetClose" type="button" data-i18n="close"></button></div>
-  <input type="search" id="searchInput" data-i18n-ph="searchPlaceholder" autocomplete="off">
-  <div id="searchResults"></div>
-  <p class="small" data-i18n="searchHint"></p>
-</div>
 <div class="sheet" id="tocSheet" role="dialog" aria-label="Contents">
   <div class="grab"></div>
   <div class="sheet-bar"><h2 data-i18n="toc"></h2><button class="btn ghost" id="tocClose" type="button" data-i18n="close"></button></div>
