@@ -1,7 +1,7 @@
 import hashlib, json, os, subprocess, time
 GH = os.path.expanduser('~/workspace/custom-connectors/custom.github-pat/bin/gh.py')
 ROOT = os.path.expanduser('~/workspace/docs-capsules')
-FILES = ['index.html','README.md','manifest.webmanifest','sw.js','version.json','css/style.css','js/app.js','js/version.js','js/vendor/highlight-dark.css','js/vendor/highlight.css','js/vendor/highlight.min.js','js/vendor/jszip.min.js','js/vendor/marked.min.js','fonts/Vazirmatn-Bold.woff2','fonts/Vazirmatn-Regular.woff2','icons/apple-touch-icon.png','icons/icon-192.png','icons/icon-512.png','icons/icon-maskable-512.png','capsules/index.json','capsules/nestjs-build-log.json','capsules/nestjs-docs-v1.zip','tools/build-capsule.py','tests/app.test.js','tests/render.test.js','tests/test-capsule.py']
+FILES = ['index.html','README.md','manifest.webmanifest','sw.js','version.json','css/style.css','js/app.js','js/version.js','js/vendor/highlight-dark.css','js/vendor/highlight.css','js/vendor/highlight.min.js','js/vendor/jszip.min.js','js/vendor/marked.min.js','fonts/Vazirmatn-Bold.woff2','fonts/Vazirmatn-Regular.woff2','icons/apple-touch-icon.png','icons/icon-192.png','icons/icon-512.png','icons/icon-maskable-512.png','capsules/index.json','capsules/nestjs-build-log.json','capsules/nestjs-docs-v1.zip','tools/build-capsule.py','tools/build-test-capsule.py','tests/app.test.js','tests/render.test.js','tests/multi.test.js','tests/test-capsule.py']
 def gh(method, path):
     out = subprocess.run(['python3', GH, method, path], capture_output=True, text=True, timeout=120)
     return json.loads(out.stdout)
